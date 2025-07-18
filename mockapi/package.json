@@ -1,0 +1,58 @@
+{
+  "name": "mock-server-infrastructure",
+  "version": "1.0.0",
+  "description": "Full-featured mock server for full-stack application development",
+  "main": "src/msw-server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "express:start": "node src/server.js",
+    "express:dev": "nodemon src/server.js",
+    "mock:start": "node src/server.js",
+    "mock:dev": "nodemon src/server.js",
+    "msw:start": "node src/msw-server.js",
+    "msw:dev": "nodemon src/msw-server.js",
+    "generate:handlers": "node scripts/generate-handlers.js",
+    "validate:spec": "swagger-cli validate specs/openapi.yaml",
+    "build": "npm run validate:spec && npm run generate:handlers",
+    "test:http": "curl -k http://localhost:3001/health",
+    "test:https": "curl -k https://localhost:3443/health",
+    "generate:cert": "openssl req -x509 -newkey rsa:4096 -keyout certs/key.pem -out certs/cert.pem -days 365 -nodes -subj '/C=US/ST=CA/L=San Francisco/O=Mock Server/OU=Development/CN=localhost'"
+  },
+  "keywords": [
+    "mock",
+    "server",
+    "msw",
+    "openapi",
+    "swagger",
+    "development"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@faker-js/faker": "^8.0.0",
+    "axios": "^1.10.0",
+    "bcryptjs": "^2.4.3",
+    "chokidar": "^3.5.3",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "msw": "^1.3.2",
+    "multer": "^1.4.5-lts.1",
+    "node-fetch": "^3.3.2",
+    "swagger-ui-express": "^5.0.0",
+    "uuid": "^9.0.0",
+    "yaml": "^2.3.2"
+  },
+  "devDependencies": {
+    "@apidevtools/swagger-cli": "^4.0.4",
+    "eslint": "^8.50.0",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.3"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
