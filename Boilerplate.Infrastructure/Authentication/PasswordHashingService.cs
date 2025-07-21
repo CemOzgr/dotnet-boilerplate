@@ -4,7 +4,7 @@ using Boilerplate.Core.Services;
 
 namespace Boilerplate.Infrastructure.Authentication;
 
-public class PasswordHashingService : IPasswordHashingService
+internal class PasswordHashingService : IPasswordHashingService
 {
     private const int SaltSize = 32;
     private const int HashSize = 32;

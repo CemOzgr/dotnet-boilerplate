@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Boilerplate.Infrastructure.Authentication;
 
-public class TokenService : ITokenService
+internal class TokenService : ITokenService
 {
     private readonly IConfiguration _configuration;
     private readonly SymmetricSecurityKey _key;
@@ -21,19 +21,19 @@ public class TokenService : ITokenService
 
     public string GenerateToken(int userId, string email, string name, IEnumerable<string> roles)
     {
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, userId.ToString()),
-            new(ClaimTypes.Email, email),
-            new(ClaimTypes.Name, name)
-        };
+        List<Claim> claims =
+        [
+            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+            new Claim(ClaimTypes.Email, email),
+            new Claim(ClaimTypes.Name, name)
+        ];
 
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256);
+        SigningCredentials credentials = new(_key, SecurityAlgorithms.HmacSha256);
         var expiry = DateTime.UtcNow.AddHours(int.Parse(_configuration["Authentication:TokenExpiryHours"] ?? "24"));
 
-        var token = new JwtSecurityToken(
+        JwtSecurityToken token = new(
             issuer: _configuration["Authentication:Issuer"],
             audience: _configuration["Authentication:Audience"],
             claims: claims,

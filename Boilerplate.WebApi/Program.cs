@@ -1,5 +1,7 @@
 using System.Text;
 using Boilerplate.Infrastructure.Authentication;
+using Boilerplate.Infrastructure.FileManagement;
+using Boilerplate.Infrastructure.Mailing;
 using Boilerplate.Infrastructure.Persistence;
 using Boilerplate.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,6 +38,8 @@ builder.Services.AddAuthorization();
 
 builder.Services
     .AddPersistenceModule(builder.Configuration)
+    .AddMailingModule(builder.Configuration)
+    .AddFileManagementModule()
     .AddAuthenticationModule();
 
 WebApplication app = builder.Build();
