@@ -18,44 +18,40 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
+    [AllowAnonymous]
     public async Task<ActionResult<AuthenticationResponse>> Login([FromBody] LoginRequest request)
     {
-        try
-        {
-            var response = await _authenticationService.AuthenticateAsync(request.Email, request.Password);
-            return Ok(response);
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return Unauthorized(new { message = "Invalid email or password" });
-        }
+       AuthenticationResponse response = await _authenticationService.AuthenticateAsync(
+           request.Email,
+           request.Password
+       );
+
+       return Ok(response);
     }
 
     [HttpPost("register")]
+    [AllowAnonymous]
     public async Task<ActionResult<AuthenticationResponse>> Register([FromBody] RegisterRequest request)
     {
-        try
-        {
-            var response = await _authenticationService.RegisterAsync(request.Name, request.Email, request.Password);
-            return Ok(response);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        AuthenticationResponse response = await _authenticationService.RegisterAsync(
+            request.Name,
+            request.Email,
+            request.Password
+        );
+
+        return Ok(response);
     }
 
     [HttpPost("change-password")]
-    [Authorize]
     public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
     {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        Claim? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
         {
             return Unauthorized();
         }
 
-        var success = await _authenticationService.ChangePasswordAsync(userId, request.CurrentPassword, request.NewPassword);
+        bool success = await _authenticationService.ChangePasswordAsync(userId, request.CurrentPassword, request.NewPassword);
         if (!success)
         {
             return BadRequest(new { message = "Current password is incorrect" });
@@ -65,12 +61,11 @@ public class AuthController : ControllerBase
     }
 
     [HttpGet("me")]
-    [Authorize]
     public ActionResult GetCurrentUser()
     {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-        var emailClaim = User.FindFirst(ClaimTypes.Email);
-        var nameClaim = User.FindFirst(ClaimTypes.Name);
+        Claim? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        Claim? emailClaim = User.FindFirst(ClaimTypes.Email);
+        Claim? nameClaim = User.FindFirst(ClaimTypes.Name);
 
         if (userIdClaim == null || emailClaim == null || nameClaim == null)
         {

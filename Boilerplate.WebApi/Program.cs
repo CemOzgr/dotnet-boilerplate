@@ -1,18 +1,18 @@
 using System.Text;
 using Boilerplate.Infrastructure.Authentication;
 using Boilerplate.Infrastructure.Persistence;
+using Boilerplate.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-builder.Services.AddControllers();
+builder.Services
+    .AddOpenApi()
+    .AddControllers();
 
-// Add authentication
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -24,8 +24,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration["Authentication:Issuer"],
             ValidAudience = builder.Configuration["Authentication:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Authentication:SecretKey"] ?? 
-                    throw new InvalidOperationException("Authentication:SecretKey is not configured")))
+                Encoding.UTF8.GetBytes(
+                    builder.Configuration["Authentication:SecretKey"] ??
+                    throw new InvalidOperationException("Authentication:SecretKey is not configured")
+                )
+            )
         };
     });
 
@@ -35,17 +38,19 @@ builder.Services
     .AddPersistenceModule(builder.Configuration)
     .AddAuthenticationModule();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
+app
+    .UseHttpsRedirection()
+    .UseAuthentication()
+    .UseAuthorization();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapControllers();
 
