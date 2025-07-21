@@ -1,4 +1,5 @@
-﻿using Boilerplate.Core.Entities;
+﻿using System.Linq.Expressions;
+using Boilerplate.Core.Entities;
 
 namespace Boilerplate.Core.Persistence;
 
@@ -38,6 +39,18 @@ public interface IRepository<TEntity> where TEntity : class, IEntity
 
     Task<int> CountAsync(
         Specification<TEntity> specification,
+        CancellationToken cancellationToken = default
+    );
+
+    // Additional methods for authentication
+    Task<TEntity?> FirstOrDefaultAsync(
+        Expression<Func<TEntity, bool>> predicate,
+        CancellationToken cancellationToken = default,
+        params Expression<Func<TEntity, object>>[] includes
+    );
+
+    Task<bool> AnyAsync(
+        Expression<Func<TEntity, bool>> predicate,
         CancellationToken cancellationToken = default
     );
 }

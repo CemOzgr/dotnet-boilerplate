@@ -1,5 +1,8 @@
 ﻿using Boilerplate.Core.Persistence;
 using Boilerplate.Core.Persistence.EfCore;
+using Boilerplate.Infrastructure.Persistence.Repositories.Abstract;
+using Boilerplate.Infrastructure.Persistence.Repositories.Concrete;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,6 +21,7 @@ public static class PersistenceModuleExtensions
         );
 
         services
+            .AddScoped<IUserRepository, EfUserRepository>()
             .AddScoped<IUnitOfWork, EfUnitOfWork<BoilerplateContext>>();
 
         return services;

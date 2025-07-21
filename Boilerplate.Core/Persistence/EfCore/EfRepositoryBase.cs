@@ -1,4 +1,5 @@
-﻿using Boilerplate.Core.Entities;
+﻿using System.Linq.Expressions;
+using Boilerplate.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Boilerplate.Core.Persistence.EfCore;
@@ -80,5 +81,27 @@ public abstract class EfRepositoryBase<TEntity, TContext> : IRepository<TEntity>
             .AsQueryable()
             .ApplySpecification(specification)
             .CountAsync(cancellationToken);
+    }
+
+    public virtual Task<TEntity?> FirstOrDefaultAsync(
+        Expression<Func<TEntity, bool>> predicate,
+        CancellationToken cancellationToken = default,
+        params Expression<Func<TEntity, object>>[] includes)
+    {
+        var query = DbSet.AsQueryable();
+
+        foreach (var include in includes)
+        {
+            query = query.Include(include);
+        }
+
+        return query.FirstOrDefaultAsync(predicate, cancellationToken);
+    }
+
+    public virtual Task<bool> AnyAsync(
+        Expression<Func<TEntity, bool>> predicate,
+        CancellationToken cancellationToken = default)
+    {
+        return DbSet.AnyAsync(predicate, cancellationToken);
     }
 }

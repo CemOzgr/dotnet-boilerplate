@@ -1,13 +1,39 @@
+using System.Text;
+using Boilerplate.Infrastructure.Authentication;
 using Boilerplate.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddControllers();
+
+// Add authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Authentication:Issuer"],
+            ValidAudience = builder.Configuration["Authentication:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Authentication:SecretKey"] ?? 
+                    throw new InvalidOperationException("Authentication:SecretKey is not configured")))
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 builder.Services
-    .AddPersistenceModule(builder.Configuration);
+    .AddPersistenceModule(builder.Configuration)
+    .AddAuthenticationModule();
 
 var app = builder.Build();
 
@@ -18,6 +44,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 
+app.MapControllers();
 
 await app.RunAsync();

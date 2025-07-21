@@ -11,4 +11,9 @@
       <Folder Include="Concrete\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Boilerplate.Core\Boilerplate.Core.csproj" />
+      <ProjectReference Include="..\Boilerplate.Entities\Boilerplate.Entities.csproj" />
+    </ItemGroup>
+
 </Project>
