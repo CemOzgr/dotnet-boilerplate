@@ -1,6 +1,6 @@
-using Boilerplate.Core.DTOs;
+using Boilerplate.Dto;
 
-namespace Boilerplate.Business.Abstract;
+namespace Boilerplate.Infrastructure.Authentication.Abstract;
 
 public interface IAuthenticationService
 {
@@ -8,4 +8,5 @@ public interface IAuthenticationService
     Task<AuthenticationResponse> RegisterAsync(string name, string email, string password, CancellationToken cancellationToken = default);
     Task<bool> ChangePasswordAsync(int userId, string currentPassword, string newPassword, CancellationToken cancellationToken = default);
     Task<bool> UserExistsAsync(string email, CancellationToken cancellationToken = default);
+    Task<UserInfoResponse?> GetUserInfoAsync(int userId, CancellationToken cancellationToken = default);
 }

@@ -1,6 +1,6 @@
 ﻿using System.Net;
-using Boilerplate.Core.DTOs;
 using Boilerplate.Core.Entities;
+using Boilerplate.Dto;
 using Boilerplate.Entities.Exceptions;
 using Serilog.Context;
 

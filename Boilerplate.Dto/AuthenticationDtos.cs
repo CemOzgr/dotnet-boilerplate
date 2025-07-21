@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Boilerplate.Core.DTOs;
+namespace Boilerplate.Dto;
 
 public record LoginRequest(
     [Required, EmailAddress] string Email,
@@ -24,4 +24,17 @@ public record AuthenticationResponse(
 public record ChangePasswordRequest(
     [Required] string CurrentPassword,
     [Required, MinLength(6)] string NewPassword
+);
+
+public record UserInfoResponse(
+    int Id,
+    string Name,
+    string Email,
+    DateTimeOffset CreatedAt,
+    List<RoleDto> Roles
+);
+
+public record RoleDto(
+    int Id,
+    string Name
 );

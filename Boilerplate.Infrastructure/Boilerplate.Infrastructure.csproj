@@ -9,6 +9,7 @@
     <ItemGroup>
       <PackageReference Include="MailKit" Version="4.13.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.7" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.7" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.7" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.7" />
@@ -22,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Boilerplate.Business\Boilerplate.Business.csproj" />
+      <ProjectReference Include="..\Boilerplate.Dto\Boilerplate.Dto.csproj" />
       <ProjectReference Include="..\Boilerplate.Entities\Boilerplate.Entities.csproj" />
       <ProjectReference Include="..\Boilerplate.Core\Boilerplate.Core.csproj" />
     </ItemGroup>

@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boilerplate.Business", "Boi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boilerplate.Core", "Boilerplate.Core\Boilerplate.Core.csproj", "{9A694FE0-6110-4AC7-9AC2-F16E86B47104}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boilerplate.Dto", "Boilerplate.Dto\Boilerplate.Dto.csproj", "{1A385CE8-7535-4E3E-AFAC-ACD7B914E0CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{9A694FE0-6110-4AC7-9AC2-F16E86B47104}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A694FE0-6110-4AC7-9AC2-F16E86B47104}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A694FE0-6110-4AC7-9AC2-F16E86B47104}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A385CE8-7535-4E3E-AFAC-ACD7B914E0CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A385CE8-7535-4E3E-AFAC-ACD7B914E0CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A385CE8-7535-4E3E-AFAC-ACD7B914E0CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A385CE8-7535-4E3E-AFAC-ACD7B914E0CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

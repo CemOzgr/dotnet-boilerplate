@@ -1,6 +1,6 @@
 using System.Security.Claims;
-using Boilerplate.Business.Abstract;
-using Boilerplate.Core.DTOs;
+using Boilerplate.Dto;
+using Boilerplate.Infrastructure.Authentication.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +19,7 @@ public class AuthController : ControllerBase
 
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<ActionResult<AuthenticationResponse>> Login([FromBody] LoginRequest request)
+    public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
     {
        AuthenticationResponse response = await _authenticationService.AuthenticateAsync(
            request.Email,
@@ -31,19 +31,20 @@ public class AuthController : ControllerBase
 
     [HttpPost("register")]
     [AllowAnonymous]
-    public async Task<ActionResult<AuthenticationResponse>> Register([FromBody] RegisterRequest request)
+    public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest request)
     {
         AuthenticationResponse response = await _authenticationService.RegisterAsync(
             request.Name,
             request.Email,
-            request.Password
+            request.Password,
+            HttpContext.RequestAborted
         );
 
-        return Ok(response);
+        return Ok(ApiResult.Success(content: response));
     }
 
     [HttpPost("change-password")]
-    public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+    public async Task<ActionResult> ChangePasswordAsync([FromBody] ChangePasswordRequest request)
     {
         Claim? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
@@ -51,33 +52,34 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
 
-        bool success = await _authenticationService.ChangePasswordAsync(userId, request.CurrentPassword, request.NewPassword);
-        if (!success)
-        {
-            return BadRequest(new { message = "Current password is incorrect" });
-        }
+        bool success = await _authenticationService.ChangePasswordAsync(
+            userId,
+            request.CurrentPassword,
+            request.NewPassword,
+            HttpContext.RequestAborted
+        );
 
-        return Ok(new { message = "Password changed successfully" });
+        return success
+            ? Ok(ApiResult.Success("Password changed successfully"))
+            : BadRequest(ApiResult.Error("Current password is incorrect"));
     }
 
     [HttpGet("me")]
-    public ActionResult GetCurrentUser()
+    public async Task<IActionResult> GetCurrentUserAsync()
     {
         Claim? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-        Claim? emailClaim = User.FindFirst(ClaimTypes.Email);
-        Claim? nameClaim = User.FindFirst(ClaimTypes.Name);
-
-        if (userIdClaim == null || emailClaim == null || nameClaim == null)
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
         {
             return Unauthorized();
         }
 
-        return Ok(new
-        {
-            id = int.Parse(userIdClaim.Value),
-            email = emailClaim.Value,
-            name = nameClaim.Value,
-            roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value)
-        });
+        UserInfoResponse? userInfo = await _authenticationService.GetUserInfoAsync(
+            userId,
+            HttpContext.RequestAborted
+        );
+
+        return userInfo == null
+            ? NotFound(ApiResult.Error("User not found"))
+            : Ok(ApiResult.Success(content: userInfo));
     }
 }

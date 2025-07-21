@@ -2,6 +2,7 @@
 using Boilerplate.Core.Persistence.EfCore;
 using Boilerplate.Infrastructure.Persistence.Repositories.Abstract;
 using Boilerplate.Infrastructure.Persistence.Repositories.Concrete;
+using Boilerplate.Infrastructure.Persistence.Seeding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,12 +18,13 @@ public static class PersistenceModuleExtensions
     {
         services.AddDbContext<BoilerplateContext>(optionsBuilder =>
                 optionsBuilder
-                    .UseSqlServer(configuration.GetConnectionString("Db"))
+                    .UseInMemoryDatabase("za")
         );
 
         services
             .AddScoped<IUserRepository, EfUserRepository>()
-            .AddScoped<IUnitOfWork, EfUnitOfWork<BoilerplateContext>>();
+            .AddScoped<IUnitOfWork, EfUnitOfWork<BoilerplateContext>>()
+            .AddScoped<IDataSeeder, DataSeeder>();
 
         return services;
     }

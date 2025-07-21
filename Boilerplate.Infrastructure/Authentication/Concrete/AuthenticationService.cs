@@ -1,21 +1,21 @@
-using Boilerplate.Business.Abstract;
-using Boilerplate.Core.DTOs;
 using Boilerplate.Core.Persistence;
 using Boilerplate.Core.Services;
+using Boilerplate.Dto;
 using Boilerplate.Entities;
-using Microsoft.EntityFrameworkCore;
+using Boilerplate.Infrastructure.Authentication.Abstract;
+using Boilerplate.Infrastructure.Persistence.Repositories.Abstract;
 
-namespace Boilerplate.Business.Concrete;
+namespace Boilerplate.Infrastructure.Authentication.Concrete;
 
 public class AuthenticationService : IAuthenticationService
 {
-    private readonly IRepository<User> _userRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPasswordHashingService _passwordHashingService;
     private readonly ITokenService _tokenService;
 
     public AuthenticationService(
-        IRepository<User> userRepository,
+        IUserRepository userRepository,
         IUnitOfWork unitOfWork,
         IPasswordHashingService passwordHashingService,
         ITokenService tokenService)
@@ -26,9 +26,13 @@ public class AuthenticationService : IAuthenticationService
         _tokenService = tokenService;
     }
 
-    public async Task<AuthenticationResponse> AuthenticateAsync(string email, string password, CancellationToken cancellationToken = default)
+    public async Task<AuthenticationResponse> AuthenticateAsync(
+        string email,
+        string password,
+        CancellationToken cancellationToken = default
+    )
     {
-        var user = await _userRepository.FirstOrDefaultAsync(
+        User? user = await _userRepository.FirstOrDefaultAsync(
             u => u.Email == email,
             cancellationToken,
             u => u.Roles);
@@ -38,8 +42,13 @@ public class AuthenticationService : IAuthenticationService
             throw new UnauthorizedAccessException("Invalid email or password");
         }
 
-        var roles = user.Roles?.Select(r => r.Name) ?? Enumerable.Empty<string>();
-        var token = _tokenService.GenerateToken(user.Id, user.Email, user.Name, roles!);
+        IEnumerable<string> roles = user.Roles.Select(r => r.Name) ?? Enumerable.Empty<string>();
+        string token = _tokenService.GenerateToken(
+            user.Id,
+            user.Email,
+            user.Name,
+            roles
+        );
 
         return new AuthenticationResponse(
             user.Id,
@@ -102,5 +111,26 @@ public class AuthenticationService : IAuthenticationService
     public async Task<bool> UserExistsAsync(string email, CancellationToken cancellationToken = default)
     {
         return await _userRepository.AnyAsync(u => u.Email == email, cancellationToken);
+    }
+
+    public async Task<UserInfoResponse?> GetUserInfoAsync(int userId, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.FirstOrDefaultAsync(
+            u => u.Id == userId,
+            cancellationToken,
+            u => u.Roles);
+
+        if (user == null)
+        {
+            return null;
+        }
+
+        return new UserInfoResponse(
+            user.Id,
+            user.Name,
+            user.Email,
+            user.CreatedAt,
+            user.Roles.Select(r => new RoleDto(r.Id, r.Name)).ToList()
+        );
     }
 }
