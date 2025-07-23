@@ -1,0 +1,11 @@
+# Core dependencies for MCP server
+fastapi>=0.15.12
+mcp[cli]>=1.12.1
+python-dotenv>=1.1.1
+tavily-python>=0.7.10
+
+# ASGI server for FastAPI
+uvicorn>=0.35.0
+
+# Additional dependencies that might be needed
+typing-extensions>=4.14.1
