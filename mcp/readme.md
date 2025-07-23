@@ -8,8 +8,7 @@ Add to cursor
 
 Stdio Server
 Add to cursor:
-/Users/emrenihatdurgun/Projects/MCP/weather-http/stdio-server.py
-
+/Users/(user-name)/mcp/stdio-server.py
 
 Dev:
 mcp dev server.py (Nasıl çalışıyor tam bilmiyorum)
