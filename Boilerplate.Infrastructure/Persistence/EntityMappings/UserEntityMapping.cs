@@ -48,6 +48,14 @@ public class UserEntityMapping : IEntityTypeConfiguration<User>
             .IsRequired();
 
         builder
+            .Property(u => u.ActivatedAt)
+            .IsRequired(false);
+
+        builder
+            .Property(u => u.DeactivatedAt)
+            .IsRequired(false);
+
+        builder
             .HasMany(u => u.Roles)
             .WithMany()
             .UsingEntity<UserRole>(
@@ -63,5 +71,10 @@ public class UserEntityMapping : IEntityTypeConfiguration<User>
                 j => j
                     .HasKey(ur => new { ur.UserId, ur.RoleId })
             );
+
+        builder
+            .HasMany(u => u.ConfirmationTokens)
+            .WithOne(t => t.User)
+            .HasForeignKey(t => t.UserId);
     }
 }

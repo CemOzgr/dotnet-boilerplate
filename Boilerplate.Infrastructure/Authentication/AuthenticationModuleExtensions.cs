@@ -1,11 +1,4 @@
-using Boilerplate.Core.Persistence;
 using Boilerplate.Core.Services;
-using Boilerplate.Entities;
-using Boilerplate.Infrastructure.Authentication;
-using Boilerplate.Infrastructure.Authentication.Abstract;
-using Boilerplate.Infrastructure.Authentication.Concrete;
-using Boilerplate.Infrastructure.Persistence.Repositories;
-using Boilerplate.Infrastructure.Persistence.Repositories.Concrete;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Boilerplate.Infrastructure.Authentication;
@@ -16,7 +9,6 @@ public static class AuthenticationModuleExtensions
     {
         services
             .AddScoped<ITokenService, TokenService>()
-            .AddScoped<IAuthenticationService, AuthenticationService>()
             .AddScoped<IPasswordHashingService, PasswordHashingService>();
 
         return services;

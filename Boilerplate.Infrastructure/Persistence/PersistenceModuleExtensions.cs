@@ -23,6 +23,7 @@ public static class PersistenceModuleExtensions
 
         services
             .AddScoped<IUserRepository, EfUserRepository>()
+            .AddScoped<IRoleRepository, EfRoleRepository>()
             .AddScoped<IUnitOfWork, EfUnitOfWork<BoilerplateContext>>()
             .AddScoped<IDataSeeder, DataSeeder>();
 
