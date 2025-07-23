@@ -1,4 +1,5 @@
 using System.Text;
+using Boilerplate.Infrastructure.Ai;
 using Boilerplate.Infrastructure.Authentication;
 using Boilerplate.Infrastructure.FileManagement;
 using Boilerplate.Infrastructure.Mailing;
@@ -79,6 +80,7 @@ builder.Services.AddAuthorization();
 builder.Services
     .AddPersistenceModule(builder.Configuration)
     .AddMailingModule(builder.Configuration)
+    .AddAiModule(builder.Configuration)
     .AddFileManagementModule()
     .AddAuthenticationModule();
 
